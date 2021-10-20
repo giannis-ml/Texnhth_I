@@ -25,8 +25,8 @@ Cost of [('apples', 2.0), ('pears', 3.0), x('limes', 4.0)] is 12.25
 from __future__ import print_function
 from os import name
 
-fruitPrices = {'apples': 2.0, 'oranges': 1.50, 'pears': 3.0,
-               'limes': 4.0, 'strawberries': 1.00}
+fruitPrices = {'apples': 2.00, 'oranges': 1.50, 'pears': 1.75,
+               'limes': 0.75, 'strawberries': 1.00}
 
 
 def buyLotsOfFruit(orderList):
@@ -36,12 +36,18 @@ def buyLotsOfFruit(orderList):
     Returns cost of order
     """
     totalCost = 0.0
+    items=fruitPrices.items()
+    prices=[]
+    for j in items:
+        prices.append(j[1])
     for i in orderList:
-        if i[0] not in fruitPrices:
-            print("ERROR: One fruit does not exist in FruitPrices")
-            return 0
-        else:
-            totalCost+=i[1]
+        counter=0
+        for k in fruitPrices:
+            if(i[0]==k):
+                # print("%s  %s"%(i[0], k))
+                totalCost+=i[1]*prices[counter]
+                break
+            counter+=1
     return totalCost
 
 
