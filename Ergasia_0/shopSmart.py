@@ -30,8 +30,8 @@ def shopSmart(orderList, fruitShops):
         fruitShops: List of FruitShops
     """
     sum=[]
-    for i in range(len(fruitShops)):
-        sum.append(fruitShops[i].getPriceOfOrder(orderList))
+    for i in fruitShops:
+        sum.append(i.getPriceOfOrder(orderList))
     min=sum[0]
     index=0
     for j in range(len(sum)):

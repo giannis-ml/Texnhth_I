@@ -28,6 +28,6 @@ def add(a, b):
     print("Passed a = %s and b = %s, returning a + b = %s" % (a, b, a + b))
     return a + b
 
-var1=-1
-var2=1
+var1=5
+var2=3
 var3=add(var1,var2)
