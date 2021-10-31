@@ -116,22 +116,37 @@ def depthFirstSearch(problem):
     frontier= util.Stack()
     frontier.push((problem.getStartState()))
     expanded=set()
-    actions={}
+    actions={problem.getStartState():[]}
     while frontier.isEmpty()==False:
         node=frontier.pop()
         if(problem.isGoalState(node)):
             return actions[node]
         if node not in expanded:
             expanded.add(node)
-            if node==problem.getStartState():
-                actions={node:[]}
             for i in problem.expand(node):
                 frontier.push(i[0])
-                actions[i[0]]=actions[node] +i[1]       
+                actions[i[0]]=[]
+                actions[i[0]].extend(actions[node])
+                actions[i[0]].append(i[1])   
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
+    frontier= util.Queue()
+    frontier.push((problem.getStartState()))
+    expanded=set()
+    actions={problem.getStartState():[]}
+    while frontier.isEmpty()==False:
+        node=frontier.pop()
+        if(problem.isGoalState(node)):
+            return actions[node]
+        if node not in expanded:
+            expanded.add(node)
+            for i in problem.expand(node):
+                frontier.push(i[0])
+                actions[i[0]]=[]
+                actions[i[0]].extend(actions[node])
+                actions[i[0]].append(i[1])
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
 
