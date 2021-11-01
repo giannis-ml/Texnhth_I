@@ -144,10 +144,13 @@ def breadthFirstSearch(problem):
             expanded.add(node)
             for i in problem.expand(node):
                 if(i[0] in actions):
-                    min=problem.getCostOfActionSequence(actions[i[0]])
+                    templist = []
+                    templist.extend(actions[node])
+                    templist.append(i[1])
+                    min=problem.getCostOfActionSequence(templist)
                     temp=problem.getCostOfActionSequence(actions[i[0]])
-                    if(temp<min):
-                        actions[i[0]].append(i[1])
+                    if(temp>min):
+                        actions[i[0]] = templist
                 else:
                     frontier.push(i[0])
                     actions[i[0]]=[]
