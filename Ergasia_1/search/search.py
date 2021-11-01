@@ -143,11 +143,16 @@ def breadthFirstSearch(problem):
         if node not in expanded:
             expanded.add(node)
             for i in problem.expand(node):
-                frontier.push(i[0])
-                actions[i[0]]=[]
-                actions[i[0]].extend(actions[node])
-                actions[i[0]].append(i[1])
-    "*** YOUR CODE HERE ***"
+                if(i[0] in actions):
+                    min=problem.getCostOfActionSequence(actions[i[0]])
+                    temp=problem.getCostOfActionSequence(actions[i[0]])
+                    if(temp<min):
+                        actions[i[0]].append(i[1])
+                else:
+                    frontier.push(i[0])
+                    actions[i[0]]=[]
+                    actions[i[0]].extend(actions[node])
+                    actions[i[0]].append(i[1])
     util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
