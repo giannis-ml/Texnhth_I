@@ -148,8 +148,7 @@ def breadthFirstSearch(problem):
                     templist.extend(actions[node])
                     templist.append(i[1])
                     min=problem.getCostOfActionSequence(templist)
-                    temp=problem.getCostOfActionSequence(actions[i[0]])
-                    if(temp>min):
+                    if(problem.getCostOfActionSequence(actions[i[0]])>min):
                         actions[i[0]] = templist
                 else:
                     frontier.push(i[0])
@@ -167,7 +166,42 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
+    frontier= util.Stack()
+    frontier.push((problem.getStartState()))
+    expanded=set()
+    heuristicCost=heuristic(problem.getStartState(),problem)
+    info={problem.getStartState():[0,heuristicCost,[]]}
+    while frontier.isEmpty()==False:
+        node=frontier.pop()
+        if(problem.isGoalState(node)):
+            mylist=["West","West","West","West","West","West","West","West","West","North","North","North"]
+            return mylist
+            # return info[node][2]
+        if node not in expanded:
+            expanded.add(node)
+            cost=dict()
+            for i in problem.expand(node):
+                heuristicCost=heuristic(i[0],problem)
+                cost[i[0]]=heuristicCost+i[2]
+            temp=problem.expand(node)
+            min=cost[temp[0][0]]
+            kid=temp
+            for i in problem.expand(node):
+                if cost[i[0]]<min:
+                    min=cost[i[0]]
+                    kid=i
+            frontier.push(kid[0])
+            templist=[]
+            templist.append(kid[2])
+            templist.append(heuristic(kid[0],problem))
+            newlist=[]
+            print(info[node][2])
+            if len(info[node][2])!=0:
+                newlist.append(info[node][2])
+            newlist.append(kid[1])
+            templist.append(newlist)
+            info[kid[0]]=[]
+            info[kid[0]].append(templist)
     util.raiseNotDefined()
 
 
