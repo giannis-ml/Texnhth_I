@@ -195,7 +195,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             templist.append(kid[2])
             templist.append(heuristic(kid[0],problem))
             newlist=[]
-            print(info[node][2])
             if len(info[node][2])!=0:
                 newlist.append(info[node][2])
             newlist.append(kid[1])
