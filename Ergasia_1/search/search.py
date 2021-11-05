@@ -166,41 +166,36 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    frontier= util.Stack()
-    frontier.push((problem.getStartState()))
+    frontier= util.PriorityQueue()
+    node=problem.getStartState()
+    realCost=0
+    heuristicCost=heuristic(node,problem)
+    totalCost=realCost+heuristicCost
+    frontier.push(node,totalCost)
     expanded=set()
-    heuristicCost=heuristic(problem.getStartState(),problem)
-    info={problem.getStartState():[0,heuristicCost,[]]}
+    actions={problem.getStartState():[]}
     while frontier.isEmpty()==False:
         node=frontier.pop()
         if(problem.isGoalState(node)):
-            mylist=["West","West","West","West","West","West","West","West","West","North","North","North"]
-            return mylist
-            # return info[node][2]
+            return actions[node]
         if node not in expanded:
             expanded.add(node)
-            cost=dict()
             for i in problem.expand(node):
-                heuristicCost=heuristic(i[0],problem)
-                cost[i[0]]=heuristicCost+i[2]
-            temp=problem.expand(node)
-            min=cost[temp[0][0]]
-            kid=temp
-            for i in problem.expand(node):
-                if cost[i[0]]<min:
-                    min=cost[i[0]]
-                    kid=i
-            frontier.push(kid[0])
-            templist=[]
-            templist.append(kid[2])
-            templist.append(heuristic(kid[0],problem))
-            newlist=[]
-            if len(info[node][2])!=0:
-                newlist.append(info[node][2])
-            newlist.append(kid[1])
-            templist.append(newlist)
-            info[kid[0]]=[]
-            info[kid[0]].append(templist)
+                if(i[0] in actions):
+                    templist = []
+                    templist.extend(actions[node])
+                    templist.append(i[1])
+                    min=problem.getCostOfActionSequence(templist)
+                    if(problem.getCostOfActionSequence(actions[i[0]])>min):
+                        actions[i[0]] = templist
+                else:
+                    realCost=i[2]
+                    heuristicCost=heuristic(i[0],problem)
+                    totalCost=realCost+heuristicCost
+                    frontier.push(i[0],totalCost)
+                    actions[i[0]]=[]
+                    actions[i[0]].extend(actions[node])
+                    actions[i[0]].append(i[1])
     util.raiseNotDefined()
 
 
