@@ -171,6 +171,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     realCost=0
     heuristicCost=heuristic(node,problem)
     totalCost=realCost+heuristicCost
+    mydict={node:realCost}
     frontier.push(node,totalCost)
     expanded=set()
     actions={problem.getStartState():[]}
@@ -189,13 +190,13 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                     if(problem.getCostOfActionSequence(actions[i[0]])>min):
                         actions[i[0]] = templist
                 else:
-                    realCost=i[2]
-                    heuristicCost=heuristic(i[0],problem)
-                    totalCost=realCost+heuristicCost
-                    frontier.push(i[0],totalCost)
                     actions[i[0]]=[]
                     actions[i[0]].extend(actions[node])
                     actions[i[0]].append(i[1])
+                mydict[i[0]]= mydict[node]+i[2]
+                heuristicCost=heuristic(i[0],problem)
+                totalCost=mydict[i[0]]+heuristicCost
+                frontier.push(i[0],totalCost)
     util.raiseNotDefined()
 
 
