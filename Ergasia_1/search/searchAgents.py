@@ -307,23 +307,23 @@ class CornersProblem(search.SearchProblem):
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
         # Please add any code here which you would like to use
         # in initializing the problem
-        "*** YOUR CODE HERE ***"
 
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        return self.startingPosition
+        return (self.startingPosition, (0,0,0,0))
         util.raiseNotDefined()
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        if state in self.corners:
-            return True
-        return False
+        for i in state[1]:
+            if i==0:
+                return False
+        return True
         util.raiseNotDefined()
 
     def expand(self, state):
@@ -369,7 +369,11 @@ class CornersProblem(search.SearchProblem):
         x, y = state[0]
         dx, dy = Actions.directionToVector(action)
         nextx, nexty = int(x + dx), int(y + dy)
-        return (nextx, nexty)
+        temp=state[1]
+        if (nextx,nexty) in self.corners:
+            temp= list(state[1])
+            temp[self.corners.index((nextx,nexty))]=1
+        return ((nextx,nexty),tuple(temp))
         util.raiseNotDefined()
 
     def getCostOfActionSequence(self, actions):
@@ -401,8 +405,8 @@ def cornersHeuristic(state, problem):
     """
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-
     "*** YOUR CODE HERE ***"
+
     return 0 # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
