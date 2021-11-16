@@ -113,11 +113,11 @@ def depthFirstSearch(problem):
     print("Start:", problem.getStartState())
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     """
-    frontier= util.Stack()
+    frontier= util.Stack()  #o frontier sthn dfs einai stack
     frontier.push((problem.getStartState()))
     expanded=set()
-    actions={problem.getStartState():[]}
-    while frontier.isEmpty()==False:
+    actions={problem.getStartState():[]}   #Exw an dictionary opou key=current state kai value=actions 
+    while frontier.isEmpty()==False:            #pou kanei to pacman mexri ekeino to state
         node=frontier.pop()
         if(problem.isGoalState(node)):
             return actions[node]
@@ -125,9 +125,9 @@ def depthFirstSearch(problem):
             expanded.add(node)
             for i in problem.expand(node):
                 frontier.push(i[0])
-                actions[i[0]]=[]
-                actions[i[0]].extend(actions[node])
-                actions[i[0]].append(i[1])   
+                actions[i[0]]=[]    #gia ta actions tou paidiou sto state bazoume ta 
+                actions[i[0]].extend(actions[node]) #actions pou exei o pateras
+                actions[i[0]].append(i[1])   #syn to action tou paidiou pou pernw apo to expand
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
@@ -135,7 +135,7 @@ def breadthFirstSearch(problem):
     frontier= util.Queue()
     frontier.push((problem.getStartState()))
     expanded=set()
-    actions={problem.getStartState():[]}
+    actions={problem.getStartState():[]}    #xrhshmopoiw idio dictionary opws sthn dfs
     while frontier.isEmpty()==False:
         node=frontier.pop()
         if(problem.isGoalState(node)):
@@ -148,8 +148,8 @@ def breadthFirstSearch(problem):
                     templist.extend(actions[node])
                     templist.append(i[1])
                     min=problem.getCostOfActionSequence(templist)
-                    if(problem.getCostOfActionSequence(actions[i[0]])>min):
-                        actions[i[0]] = templist
+                    if(problem.getCostOfActionSequence(actions[i[0]])>min): #an to paidi exei hdh
+                        actions[i[0]] = templist    #actions krathse ta kalytera(me to ligotero kostos)
                 else:
                     frontier.push(i[0])
                     actions[i[0]]=[]
@@ -166,7 +166,7 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    frontier= util.PriorityQueue()
+    frontier= util.PriorityQueue()  
     node=problem.getStartState()
     realCost=0
     heuristicCost=heuristic(node,problem)

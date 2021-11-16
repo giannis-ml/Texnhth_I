@@ -313,7 +313,7 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        return (self.startingPosition, (0,0,0,0))
+        return (self.startingPosition, (0,0,0,0))   
         util.raiseNotDefined()
 
     def isGoalState(self, state):
@@ -371,9 +371,9 @@ class CornersProblem(search.SearchProblem):
         nextx, nexty = int(x + dx), int(y + dy)
         temp=state[1]
         if (nextx,nexty) in self.corners:
-            temp= list(state[1])
-            temp[self.corners.index((nextx,nexty))]=1
-        return ((nextx,nexty),tuple(temp))
+            temp= list(state[1])        
+            temp[self.corners.index((nextx,nexty))]=1   #an to paidi einai corner tote bale 1
+        return ((nextx,nexty),tuple(temp))          #sthn thesh ayths tou corner sto state tou paidiou
         util.raiseNotDefined()
 
     def getCostOfActionSequence(self, actions):
@@ -415,9 +415,9 @@ def cornersHeuristic(state, problem):
     distances=[]
     distances.append(0)
     for i in unvisitedCorners:
-        heuristicCost= util.manhattanDistance(state[0],i)
-        distances.append(heuristicCost)
-    return max(distances)
+        heuristicCost= util.manhattanDistance(state[0],i) #gia kathe unvisited corner ypologhse thn 
+        distances.append(heuristicCost)               #thn apostash manhattan apo to state kai kane
+    return max(distances)                               #return to megalytero
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -536,8 +536,8 @@ def foodHeuristic(state, problem):
     costs=[]
     costs.append(0)
     for i in food:
-        temp=util.manhattanDistance(position,i)
-        costs.append(temp)
+        temp=mazeDistance(position,i,problem.startingGameState) #gia kathe state pou yparxei food
+        costs.append(temp)  #ypologhse thn maze distance apo to current state kai kane return thn megalyterh
     return max(costs)
 
 class ClosestDotSearchAgent(SearchAgent):
@@ -568,7 +568,7 @@ class ClosestDotSearchAgent(SearchAgent):
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
         from search import breadthFirstSearch
-        return breadthFirstSearch(problem)
+        return breadthFirstSearch(problem) #kanw import kai kalw thn bfs
         util.raiseNotDefined()
 
 class AnyFoodSearchProblem(PositionSearchProblem):
