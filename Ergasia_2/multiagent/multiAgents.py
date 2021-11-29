@@ -12,6 +12,7 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
+from typing import List
 from util import manhattanDistance
 from game import Directions
 import random, util
@@ -48,7 +49,6 @@ class ReflexAgent(Agent):
         chosenIndex = random.choice(bestIndices) # Pick randomly among the best
 
         "Add more of your code here if you want to"
-
         return legalMoves[chosenIndex]
 
     def evaluationFunction(self, currentGameState, action):
@@ -74,6 +74,11 @@ class ReflexAgent(Agent):
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
         "*** YOUR CODE HERE ***"
+        foodCost=0;
+        ghostCost=0;
+        for i in newFood.asList():
+            foodCost+= (2*i[0]+4*i[1])/2
+        print(newScaredTimes)
         return childGameState.getScore()
 
 def scoreEvaluationFunction(currentGameState):
