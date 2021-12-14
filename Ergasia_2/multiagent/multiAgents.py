@@ -78,8 +78,6 @@ class ReflexAgent(Agent):
         foodCost=[]
         ghostCost=[]
         from util import manhattanDistance
-        for i in foodList:
-            foodCost.append(manhattanDistance(newPos,i))
         for j in childGameState.getGhostPositions():
             ghostCost.append(manhattanDistance(j,newPos))
         totalCost=0;
