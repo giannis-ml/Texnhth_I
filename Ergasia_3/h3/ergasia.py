@@ -2,6 +2,8 @@ from datetime import date
 import pandas as pd
 import random
 import csp
+import math
+
 
 def constraints_function(A, a, B, b):
     if(myDict[A][0]==myDict[B][0] and (a-b>=3 or b-a>=3)):
@@ -15,6 +17,18 @@ def constraints_function(A, a, B, b):
     if((myDict[A][2]==True and myDict[B][2]==True)and(b-a>=2 or a-b>=2)):
         return True
     return False
+
+def display_program(assignment):
+    for i in assignment:
+        if(assignment[i]%3==0):
+            time="9-12"
+        elif(assignment[i]%3==1):
+            time="12-3"
+        else:
+            time="3-6"
+        print (i," Mέρα εξέτασης:",math.ceil((assignment[i]+1)/3),"Ώρα εξέτασης: ",time)
+        
+        
 
 def minimum_remaining_value_sorting(variables,domains):
     min=len(domains[variables[0]])
@@ -53,14 +67,6 @@ courses=temp #variables of the problem
 slots= []
 for i in range(1,64):
     slots.append(i)
-# dates={}
-# for i in range(0,len(slots),3):
-#     print(21/(i+1))
-#     dates[i] = (i%21)+1,"9-12"
-#     dates[i+1] = (i%21)+1,"12-3"
-#     dates[i+2] = (i%21)+1,"3-6"
-#ftiakse esy mia display  function
-#print(dates)
 domains= {}
 for i in range(len(courses)):
     domains[courses[i]]=slots   #domains of the problem
@@ -77,10 +83,16 @@ exam_timetabling_problem= csp.CSP(courses,domains,neighbors,constraints_function
 assignment={}
 for i in range(len(courses)):
     index=minimum_remaining_value_sorting(courses,domains)
-    val= random.randint(1, len(domains[courses[index]]))
-    exam_timetabling_problem.assign(courses[index],val,assignment)
-    removals= exam_timetabling_problem.suppose(courses[index],val)
-    csp.forward_checking(exam_timetabling_problem,courses[index],val,assignment,removals)
+    exam_timetabling_problem.assign(courses[index],1,assignment)
+    while True:
+        val= random.randint(1, len(domains[courses[index]]))
+        exam_timetabling_problem.unassign(courses[index],assignment)
+        exam_timetabling_problem.assign(courses[index],val,assignment)
+        removals= exam_timetabling_problem.suppose(courses[index],val)
+        if (csp.forward_checking(exam_timetabling_problem,courses[index],val,assignment,removals)):
+            break
     del domains[courses[index]]
     courses.remove(courses[index])
-exam_timetabling_problem.display(assignment)
+display_program(assignment)
+#print(assignment)
+#print(constraints_function('Τεχνητή Νοημοσύνη ΙΙ (ΤΟ ΔΕΥΤΕΡΟ ΚΑΛΥΤΕΡΟ!!!)_lab',assignment['Τεχνητή Νοημοσύνη ΙΙ (ΤΟ ΔΕΥΤΕΡΟ ΚΑΛΥΤΕΡΟ!!!)_lab'],'Τεχνητή Νοημοσύνη ΙΙ (ΤΟ ΔΕΥΤΕΡΟ ΚΑΛΥΤΕΡΟ!!!',assignment['Τεχνητή Νοημοσύνη ΙΙ (ΤΟ ΔΕΥΤΕΡΟ ΚΑΛΥΤΕΡΟ!!!)']))
