@@ -6,18 +6,15 @@ import math
 
 
 def constraints_function(A, a, B, b):
-    if(myDict[A][0]==myDict[B][0] and (a-b>=3 or b-a>=3)):
+    if(myDict[A][0]==myDict[B][0] and (math.ceil((a+1)/3)!= math.ceil((b+1)/3))):
         return True
-    if(myDict[A][1]==myDict[B][1] and (a-b>=3 or b-a>=3)):
+    if(myDict[A][1]==myDict[B][1] and (math.ceil((a+1)/3)!= math.ceil((b+1)/3))):
         return True
-    if((A==B+"_lab" and a==b+1) or (B==A+"_lab" and b==a+1)):
+    if((myDict[A][2]==True and myDict[B][2]==True)and(math.ceil((b+1)/3)-math.ceil((a+1)/3)>=2 or math.ceil((a+1)/3)-math.ceil((b+1)/3)>=2)):
         return True
-    if((myDict[A][3]==True and (b>=a+2 or b<a))or(myDict[B][3]==True and (a>=b+2 or a<b))):
-        return True
-    if((myDict[A][2]==True and myDict[B][2]==True)and(b-a>=2 or a-b>=2)):
+    if((myDict[A]==True and csp.neighbors[B]==A and b==a+1) or (myDict[B]==True and csp.neighbors[A]==B and a==b+1)):
         return True
     return False
-
 
 class Timetabling(csp.CSP):
 
@@ -29,10 +26,16 @@ class Timetabling(csp.CSP):
         self.neighbors= {}
         for i in range(len(courses)):
             self.neighbors[courses[i]]= []
-        for i in range(len(professors)): #ola ta mathimata xwris auta pou exoun ergasthrio afou ekeina den exoun geitones
+        labs_counter=0
+        for i in range(len(professors)):
             for j in range(len(professors)):
                 if (myDict[courses[i]][0]==myDict[courses[j]][0] or myDict[courses[i]][1]==myDict[courses[j]][1] or (myDict[courses[i]][2]==True and myDict[courses[j]][2]==True)) and courses[i]!=courses[j]:
                     self.neighbors[courses[i]].append(courses[j])
+            if(myDict[courses[i]][3]==True):
+                self.neighbors[courses[len(professors)+labs_counter]].append(courses[i])
+                labs_counter+=1
+    
+                
         csp.CSP.__init__(self,self.variables,self.domains,self.neighbors,constraints_function)
 
     def display(self):
@@ -68,6 +71,11 @@ if __name__ == "__main__":
         if myDict[courses[i]][3]:
             new_name=courses[i]+"_lab"
             temp.append(new_name)
+            myDict[new_name]=[]
+            myDict[new_name].append(myDict[courses[i]])
+            myDict[new_name].append(myDict[courses[i]])
+            myDict[new_name].append(myDict[courses[i]])
+            myDict[new_name].append(myDict[courses[i]])
     courses= []
     courses=temp
     temp=[]
@@ -96,5 +104,3 @@ if __name__ == "__main__":
     examination_of_di = Timetabling(courses,semesters,professors,difficultly,labs,myDict,slots)
     csp.backtracking_search(examination_of_di, csp.mrv, csp.lcv , csp.forward_checking)
     #examination_of_di.display()
-    
-    
