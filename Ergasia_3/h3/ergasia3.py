@@ -8,6 +8,9 @@ import math
 def constraints_function(csp,A, a, B, b):
     index_of_A= courses.index(A)
     index_of_B= courses.index(B)
+    if(A!=B):
+        if(a==b):
+            return False
     if(semesters[index_of_A]==semesters[index_of_B]):
         if(math.ceil((a+1)/3)== math.ceil((b+1)/3)):
             if (not((labs[index_of_A]==True and csp.neighbors[B][0]==A)or(labs[index_of_B]==True and csp.neighbors[A][0]==B))):
@@ -19,8 +22,14 @@ def constraints_function(csp,A, a, B, b):
     if(difficultly[index_of_A]==True and difficultly[index_of_B]==True):
         if((math.ceil((b+1)/3)-math.ceil((a+1)/3)>=2 or math.ceil((a+1)/3)-math.ceil((b+1)/3)>=2)==False):
             return False
-    if(((labs[index_of_A]==True and csp.neighbors[B]==A) and b!=a+1) or ((labs[index_of_B]==True and csp.neighbors[A]==B) and a!=b+1)):
-        return False
+    # if(labs[index_of_A]==True):
+    #     if(csp.neighbors[B][0]==A):
+    #         if(b!=a+1):
+    #             return False
+    # if(labs[index_of_B]==True):
+    #     if(csp.neighbors[A][0]==B):
+    #         if(a!=b+1):
+    #             return False
     return True
 
 class Timetabling(csp.CSP):
@@ -43,7 +52,7 @@ class Timetabling(csp.CSP):
                 if ((semesters[i]==semesters[j]) or (professors[i]==professors[j]) or (difficultly[i]==True and difficultly[j]==True)) and courses[i]!=courses[j]:
                     self.neighbors[courses[i]].append(courses[j])
             if(labs[i]==True):
-                if(labs_counter==courses_with_labs-1):
+                if(labs_counter==courses_with_labs):
                     break
                 self.neighbors[courses[len(courses)-courses_with_labs+labs_counter]].append(courses[i])
                 labs_counter+=1
@@ -51,8 +60,7 @@ class Timetabling(csp.CSP):
                 
         csp.CSP.__init__(self,self.variables,self.domains,self.neighbors,constraints_function)
 
-    def display(self):
-        output = csp.min_conflicts(self)
+    def display(self,output):
         for i in output:
             if(output[i]%3==0):
                 time="9-12"
@@ -106,6 +114,5 @@ if __name__ == "__main__":
     for i in range(1,64):
         slots.append(i)
     examination_of_di = Timetabling(courses,semesters,professors,difficultly,labs,slots)
-    print(csp.backtracking_search(examination_of_di, csp.mrv, csp.lcv , csp.forward_checking))
-    print(constraints_function(examination_of_di,'Εισαγωγή στον Προγραµµατισµό_lab',2,'Εισαγωγή στον Προγραµµατισµό',1))
-    #examination_of_di.display()
+    output=csp.backtracking_search(examination_of_di, csp.mrv, csp.lcv , csp.forward_checking)
+    examination_of_di.display(output)

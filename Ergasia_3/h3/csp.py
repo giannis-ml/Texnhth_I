@@ -405,6 +405,7 @@ def backtracking_search(csp, select_unassigned_variable=first_unassigned_variabl
     """[Figure 6.5]"""
 
     def backtrack(assignment):
+        #csp.support_pruning()
         if len(assignment) == len(csp.variables):
             return assignment
         var = select_unassigned_variable(assignment, csp)
@@ -412,12 +413,17 @@ def backtracking_search(csp, select_unassigned_variable=first_unassigned_variabl
             if 0 == csp.nconflicts(var, value, assignment):
                 csp.assign(var, value, assignment)
                 removals = csp.suppose(var, value)
+                #csp.prune(var,value,removals)
                 if inference(csp, var, value, assignment, removals):
                     result = backtrack(assignment)
                     if result is not None:
                         return result
                 csp.restore(removals)
+        #temp=assignment[var]
         csp.unassign(var, assignment)
+        # for a in csp.variables:
+        #     if temp not in csp.currdomains[a]:
+        #         csp.currdomains[a].append(temp)
         return None
 
     result = backtrack({})
