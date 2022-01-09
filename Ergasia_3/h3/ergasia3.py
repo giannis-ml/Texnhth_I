@@ -5,6 +5,8 @@ import csp
 import math
 
 
+# def dom_deg(assignment, csp):
+
 def constraints_function(csp,A, a, B, b):
     index_of_A= courses.index(A)
     index_of_B= courses.index(B)
@@ -115,4 +117,8 @@ if __name__ == "__main__":
         slots.append(i)
     examination_of_di = Timetabling(courses,semesters,professors,difficultly,labs,slots)
     output=csp.backtracking_search(examination_of_di, csp.mrv, csp.lcv , csp.forward_checking)
+    print("FORWARD CHECKING")
+    examination_of_di.display(output)
+    output= csp.min_conflicts(examination_of_di)
+    print("MIN CONFLICTS")
     examination_of_di.display(output)
