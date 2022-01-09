@@ -77,7 +77,7 @@ class CSP(search.Problem):
 
         # Subclasses may implement this more efficiently
         def conflict(var2):
-            return var2 in assignment and not self.constraints(var, val, var2, assignment[var2])
+            return var2 in assignment and not self.constraints(self,var, val, var2, assignment[var2])
 
         return count(conflict(v) for v in self.neighbors[var])
 
@@ -194,7 +194,7 @@ def revise(csp, Xi, Xj, removals, checks=0):
         # if all(not csp.constraints(Xi, x, Xj, y) for y in csp.curr_domains[Xj]):
         conflict = True
         for y in csp.curr_domains[Xj]:
-            if csp.constraints(Xi, x, Xj, y):
+            if csp.constraints(csp,Xi, x, Xj, y):
                 conflict = False
             checks += 1
             if not conflict:
@@ -241,7 +241,7 @@ def AC3b(csp, queue=None, removals=None, arc_heuristic=dom_j_up):
             for vj_p in Sj_u:
                 for vi_p in Si_p:
                     conflict = True
-                    if csp.constraints(Xj, vj_p, Xi, vi_p):
+                    if csp.constraints(csp,Xj, vj_p, Xi, vi_p):
                         conflict = False
                         Sj_p.add(vj_p)
                     checks += 1
@@ -269,7 +269,7 @@ def partition(csp, Xi, Xj, checks=0):
         # and it is just as likely that any vj_u in Sj_u supports vi_u than it is that any vj_p in Sj_p does...
         for vj_u in Sj_u - Sj_p:
             # double-support check
-            if csp.constraints(Xi, vi_u, Xj, vj_u):
+            if csp.constraints(csp,Xi, vi_u, Xj, vj_u):
                 conflict = False
                 Si_p.add(vi_u)
                 Sj_p.add(vj_u)
@@ -281,7 +281,7 @@ def partition(csp, Xi, Xj, checks=0):
         if conflict:
             for vj_p in Sj_p:
                 # single-support check
-                if csp.constraints(Xi, vi_u, Xj, vj_p):
+                if csp.constraints(csp,Xi, vi_u, Xj, vj_p):
                     conflict = False
                     Si_p.add(vi_u)
                 checks += 1
@@ -307,7 +307,7 @@ def AC4(csp, queue=None, removals=None, arc_heuristic=dom_j_up):
         revised = False
         for x in csp.curr_domains[Xi][:]:
             for y in csp.curr_domains[Xj]:
-                if csp.constraints(Xi, x, Xj, y):
+                if csp.constraints(csp,Xi, x, Xj, y):
                     support_counter[(Xi, x, Xj)] += 1
                     variable_value_pairs_supported[(Xj, y)].add((Xi, x))
                 checks += 1
@@ -385,7 +385,7 @@ def forward_checking(csp, var, value, assignment, removals):
     for B in csp.neighbors[var]:
         if B not in assignment:
             for b in csp.curr_domains[B][:]:
-                if not csp.constraints(var, value, B, b):
+                if not csp.constraints(csp,var, value, B, b):
                     csp.prune(B, b, removals)
             if not csp.curr_domains[B]:
                 return False
@@ -517,7 +517,7 @@ def make_arc_consistent(Xj, Xk, csp):
     for val1 in csp.domains[Xj]:
         keep = False  # Keep or remove val1
         for val2 in csp.domains[Xk]:
-            if csp.constraints(Xj, val1, Xk, val2):
+            if csp.constraints(csp,Xj, val1, Xk, val2):
                 # Found a consistent assignment for val1, keep it
                 keep = True
                 break
@@ -534,7 +534,7 @@ def assign_value(Xj, Xk, csp, assignment):
     Return the first value that satisfies the constraints."""
     parent_assignment = assignment[Xj]
     for val in csp.curr_domains[Xk]:
-        if csp.constraints(Xj, parent_assignment, Xk, val):
+        if csp.constraints(csp,Xj, parent_assignment, Xk, val):
             return val
 
     # No consistent assignment available

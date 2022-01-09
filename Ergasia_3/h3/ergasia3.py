@@ -5,20 +5,27 @@ import csp
 import math
 
 
-def constraints_function(A, a, B, b):
-    if(myDict[A][0]==myDict[B][0] and (math.ceil((a+1)/3)!= math.ceil((b+1)/3))):
-        return True
-    if(myDict[A][1]==myDict[B][1] and (math.ceil((a+1)/3)!= math.ceil((b+1)/3))):
-        return True
-    if((myDict[A][2]==True and myDict[B][2]==True)and(math.ceil((b+1)/3)-math.ceil((a+1)/3)>=2 or math.ceil((a+1)/3)-math.ceil((b+1)/3)>=2)):
-        return True
-    if((myDict[A]==True and csp.neighbors[B]==A and b==a+1) or (myDict[B]==True and csp.neighbors[A]==B and a==b+1)):
-        return True
-    return False
+def constraints_function(csp,A, a, B, b):
+    index_of_A= courses.index(A)
+    index_of_B= courses.index(B)
+    if(semesters[index_of_A]==semesters[index_of_B]):
+        if(math.ceil((a+1)/3)== math.ceil((b+1)/3)):
+            if (not((labs[index_of_A]==True and csp.neighbors[B][0]==A)or(labs[index_of_B]==True and csp.neighbors[A][0]==B))):
+                return False
+    if((professors[index_of_A]==professors[index_of_B])):
+        if(math.ceil((a+1)/3)== math.ceil((b+1)/3)):
+            if (not((labs[index_of_A]==True and csp.neighbors[B][0]==A)or(labs[index_of_B]==True and csp.neighbors[A][0]==B))):
+                return False
+    if(difficultly[index_of_A]==True and difficultly[index_of_B]==True):
+        if((math.ceil((b+1)/3)-math.ceil((a+1)/3)>=2 or math.ceil((a+1)/3)-math.ceil((b+1)/3)>=2)==False):
+            return False
+    if(((labs[index_of_A]==True and csp.neighbors[B]==A) and b!=a+1) or ((labs[index_of_B]==True and csp.neighbors[A]==B) and a!=b+1)):
+        return False
+    return True
 
 class Timetabling(csp.CSP):
 
-    def __init__(self,courses,semesters,professors,difficultly,labs,myDict,slots):
+    def __init__(self,courses,semesters,professors,difficultly,labs,slots):
         self.variables = courses
         self.domains= {}
         for i in range(len(courses)):
@@ -27,12 +34,18 @@ class Timetabling(csp.CSP):
         for i in range(len(courses)):
             self.neighbors[courses[i]]= []
         labs_counter=0
-        for i in range(len(professors)):
-            for j in range(len(professors)):
-                if (myDict[courses[i]][0]==myDict[courses[j]][0] or myDict[courses[i]][1]==myDict[courses[j]][1] or (myDict[courses[i]][2]==True and myDict[courses[j]][2]==True)) and courses[i]!=courses[j]:
+        courses_with_labs=0
+        for i in labs:
+            if i==True:
+                courses_with_labs+=1
+        for i in range(len(courses)):
+            for j in range(len(courses)):
+                if ((semesters[i]==semesters[j]) or (professors[i]==professors[j]) or (difficultly[i]==True and difficultly[j]==True)) and courses[i]!=courses[j]:
                     self.neighbors[courses[i]].append(courses[j])
-            if(myDict[courses[i]][3]==True):
-                self.neighbors[courses[len(professors)+labs_counter]].append(courses[i])
+            if(labs[i]==True):
+                if(labs_counter==courses_with_labs-1):
+                    break
+                self.neighbors[courses[len(courses)-courses_with_labs+labs_counter]].append(courses[i])
                 labs_counter+=1
     
                 
@@ -56,28 +69,6 @@ if __name__ == "__main__":
     professors= df['Καθηγητής']
     difficultly= df['Δύσκολο (TRUE/FALSE)']
     labs= df['Εργαστήριο (TRUE/FALSE)']
-    myDict={}
-    for i in range(len(courses)):
-        myDict[courses[i]]=[]
-    for i in range(len(courses)):
-        myDict[courses[i]].append(semesters[i])
-        myDict[courses[i]].append(professors[i])
-        myDict[courses[i]].append(difficultly[i])
-        myDict[courses[i]].append(labs[i])
-    temp=[]
-    for i in range(len(courses)):
-        temp.append(courses[i])
-    for i in range(len(courses)):
-        if myDict[courses[i]][3]:
-            new_name=courses[i]+"_lab"
-            temp.append(new_name)
-            myDict[new_name]=[]
-            myDict[new_name].append(myDict[courses[i]])
-            myDict[new_name].append(myDict[courses[i]])
-            myDict[new_name].append(myDict[courses[i]])
-            myDict[new_name].append(myDict[courses[i]])
-    courses= []
-    courses=temp
     temp=[]
     for i in semesters:
         temp.append(i)
@@ -98,9 +89,23 @@ if __name__ == "__main__":
         temp.append(i)
     labs= []
     labs=temp
+    temp=[]
+    for i in range(len(courses)):
+        temp.append(courses[i])
+    for i in range(len(courses)):
+        if labs[i]==True:
+            new_name=courses[i]+"_lab"
+            temp.append(new_name)
+            semesters.append(semesters[i])
+            professors.append(professors[i])
+            difficultly.append(difficultly[i])
+            labs.append('False')
+    courses= []
+    courses=temp
     slots= []
     for i in range(1,64):
         slots.append(i)
-    examination_of_di = Timetabling(courses,semesters,professors,difficultly,labs,myDict,slots)
-    csp.backtracking_search(examination_of_di, csp.mrv, csp.lcv , csp.forward_checking)
+    examination_of_di = Timetabling(courses,semesters,professors,difficultly,labs,slots)
+    print(csp.backtracking_search(examination_of_di, csp.mrv, csp.lcv , csp.forward_checking))
+    print(constraints_function(examination_of_di,'Εισαγωγή στον Προγραµµατισµό_lab',2,'Εισαγωγή στον Προγραµµατισµό',1))
     #examination_of_di.display()
