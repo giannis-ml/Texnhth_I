@@ -10,28 +10,30 @@ import math
 def constraints_function(csp,A, a, B, b):
     index_of_A= courses.index(A)
     index_of_B= courses.index(B)
-    if(A!=B):
-        if(a==b):
-            return False
+    # if(A!=B):
+    #     if(a==b):
+    #         return False
+    # if A==B+"_lab" :
+    #     if math.ceil((a+1)/3)!= math.ceil((b+1)/3):
+    #         return False
+    #     else:
+    #         if a-b!=1:
+    #             return False
+    # if B==A+"_lab" :
+    #     if math.ceil((b+1)/3)!= math.ceil((a+1)/3):
+    #         return False
+    #     else:
+    #         if b-a!=1:
+    #             return False
     if(semesters[index_of_A]==semesters[index_of_B]):
         if(math.ceil((a+1)/3)== math.ceil((b+1)/3)):
-            if (not((labs[index_of_A]==True and csp.neighbors[B][0]==A)or(labs[index_of_B]==True and csp.neighbors[A][0]==B))):
-                return False
+            return False
     if((professors[index_of_A]==professors[index_of_B])):
         if(math.ceil((a+1)/3)== math.ceil((b+1)/3)):
-            if (not((labs[index_of_A]==True and csp.neighbors[B][0]==A)or(labs[index_of_B]==True and csp.neighbors[A][0]==B))):
-                return False
+            return False
     if(difficultly[index_of_A]==True and difficultly[index_of_B]==True):
         if((math.ceil((b+1)/3)-math.ceil((a+1)/3)>=2 or math.ceil((a+1)/3)-math.ceil((b+1)/3)>=2)==False):
             return False
-    # if(labs[index_of_A]==True):
-    #     if(csp.neighbors[B][0]==A):
-    #         if(b!=a+1):
-    #             return False
-    # if(labs[index_of_B]==True):
-    #     if(csp.neighbors[A][0]==B):
-    #         if(a!=b+1):
-    #             return False
     return True
 
 class Timetabling(csp.CSP):
@@ -51,13 +53,8 @@ class Timetabling(csp.CSP):
                 courses_with_labs+=1
         for i in range(len(courses)):
             for j in range(len(courses)):
-                if ((semesters[i]==semesters[j]) or (professors[i]==professors[j]) or (difficultly[i]==True and difficultly[j]==True)) and courses[i]!=courses[j]:
+                if i!=j:
                     self.neighbors[courses[i]].append(courses[j])
-            if(labs[i]==True):
-                if(labs_counter==courses_with_labs):
-                    break
-                self.neighbors[courses[len(courses)-courses_with_labs+labs_counter]].append(courses[i])
-                labs_counter+=1
     
                 
         csp.CSP.__init__(self,self.variables,self.domains,self.neighbors,constraints_function)
@@ -121,4 +118,4 @@ if __name__ == "__main__":
     examination_of_di.display(output)
     output= csp.min_conflicts(examination_of_di)
     print("MIN CONFLICTS")
-    examination_of_di.display(output)
+    #examination_of_di.display(output)
