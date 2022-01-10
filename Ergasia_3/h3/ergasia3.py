@@ -8,23 +8,22 @@ import math
 # def dom_deg(assignment, csp):
 
 def constraints_function(csp,A, a, B, b):
-    index_of_A= courses.index(A)
-    index_of_B= courses.index(B)
-    # if(A!=B):
-    #     if(a==b):
-    #         return False
-    # if A==B+"_lab" :
-    #     if math.ceil((a+1)/3)!= math.ceil((b+1)/3):
-    #         return False
-    #     else:
-    #         if a-b!=1:
-    #             return False
-    # if B==A+"_lab" :
-    #     if math.ceil((b+1)/3)!= math.ceil((a+1)/3):
-    #         return False
-    #     else:
-    #         if b-a!=1:
-    #             return False
+    index_of_A= csp.variables.index(A)
+    index_of_B= csp.variables.index(B)
+    if(a==b):
+        return False
+    if (A==(B+"_lab")):
+        if math.ceil((a+1)/3)!= math.ceil((b+1)/3):
+            return False
+        else:
+            if b-a!=1:
+                return False
+    if (B==(A+"_lab")):
+        if math.ceil((b+1)/3)!= math.ceil((a+1)/3):
+            return False
+        else:
+            if a-b!=1:
+                return False
     if(semesters[index_of_A]==semesters[index_of_B]):
         if(math.ceil((a+1)/3)== math.ceil((b+1)/3)):
             return False
@@ -118,4 +117,5 @@ if __name__ == "__main__":
     examination_of_di.display(output)
     output= csp.min_conflicts(examination_of_di)
     print("MIN CONFLICTS")
-    #examination_of_di.display(output)
+    examination_of_di.display(output)
+    
