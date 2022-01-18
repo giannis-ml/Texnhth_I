@@ -4,12 +4,14 @@ import random
 import csp
 import math
 
-
+# A function that returns true if neighbors
+# A, B satisfy the constraint when they have values A=a, B=b
 def constraints_function(csp,A, a, B, b):
     index_of_A= csp.variables.index(A)
     index_of_B= csp.variables.index(B)
     if(a==b):
         return False
+    # condition for labs that is not working properly and make program not terminate
     # if (A==(B+"_lab")):
     #     if math.ceil((a+1)/3)!= math.ceil((b+1)/3):
     #         return False
@@ -22,17 +24,22 @@ def constraints_function(csp,A, a, B, b):
     #     else:
     #         if a-b!=1:
     #             return False
+    # condition for semester constraint
     if(semesters[index_of_A]==semesters[index_of_B]):
+        # checks if course A examined in the same day with course B
         if(math.ceil((a+1)/3)== math.ceil((b+1)/3)):
             return False
+    # condition for professors constraint
     if((professors[index_of_A]==professors[index_of_B])):
         if(math.ceil((a+1)/3)== math.ceil((b+1)/3)):
             return False
+    # condition for difficult courses
     if(difficultly[index_of_A]==True and difficultly[index_of_B]==True):
         if((math.ceil((b+1)/3)-math.ceil((a+1)/3)>=2 or math.ceil((a+1)/3)-math.ceil((b+1)/3)>=2)==False):
             return False
     return True
 
+# function that takes a empty dictionary and returns dictionary with {var:degree}
 def compute_degree(csp,deg):
     for i in range(0,len(csp.variables),1):
         counter=0
@@ -47,12 +54,14 @@ def compute_degree(csp,deg):
                 counter+=1
         deg[csp.variables[i]]=counter
 
+# function that takes a empty dictionary and returns dictionary with {var:domain size}
 def compute_domain_size(csp,dom):
     for i in csp.variables:
         domain_size=len(csp.domains[i])
         dom[i]=domain_size
 
-def dom_deg(assignment, csp):
+# dom/wdeg heuristic that returns variale which minimize the quotient (domain size of the variable)/(degree of the variable)
+def dom_wdeg(assignment, csp):
     dom={}
     deg={}
     quotient={}
@@ -147,16 +156,15 @@ if __name__ == "__main__":
     for i in range(1,64):
         slots.append(i)
     examination_of_di = Timetabling(courses,semesters,professors,difficultly,labs,slots)
-    # output=csp.backtracking_search(examination_of_di, csp.mrv, csp.lcv , csp.forward_checking)
-    # print("FORWARD CHECKING")
-    # examination_of_di.display(output)
+    output=csp.backtracking_search(examination_of_di, csp.mrv, csp.lcv , csp.forward_checking)
+    print("\nFORWARD CHECKING\n")
+    examination_of_di.display(output)
 
-    # output=csp.backtracking_search(examination_of_di, dom_deg, csp.lcv , csp.mac )
-    # print("MAC")
-    # examination_of_di.display(output)
+    output=csp.backtracking_search(examination_of_di, dom_wdeg, csp.lcv , csp.mac )
+    print("\nMAC\n")
+    examination_of_di.display(output)
 
-    # output= csp.min_conflicts(examination_of_di)
-    # print("MIN CONFLICTS")
-    # examination_of_di.display(output)
-    print(len(examination_of_di.variables))
+    output= csp.min_conflicts(examination_of_di)
+    print("\nMIN CONFLICTS\n")
+    examination_of_di.display(output)
     
